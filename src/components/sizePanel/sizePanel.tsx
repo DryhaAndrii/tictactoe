@@ -2,37 +2,37 @@ import "./sizePanel.scss";
 import { fieldSizeStore } from "@/store/fieldSizeStore";
 
 export default function SizePanel() {
-  const { x, y, setX, setY } = fieldSizeStore();
+  const { fieldSize, setFieldSize } = fieldSizeStore();
 
-  // Обработчик изменения значений в input
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: "x" | "y"
-  ) => {
-    const value = Number(e.target.value);
-    
+  const changeSize = (delta: number) => {
+    const newFieldSize = fieldSize + delta;
 
-    if (field === "x") return setX(value);
-    setY(value);
+    if (newFieldSize >= 3 && newFieldSize <= 9) {
+      setFieldSize(newFieldSize);
+    }
   };
 
   return (
     <div className="sizePanel">
-      <input
-        type="number"
-        min="3"
-        max="9"
-        value={x}
-        onChange={(e) => handleChange(e, "x")}
-      />
-      <span>&#10006;</span>
-      <input
-        type="number"
-        min="3"
-        max="9"
-        value={y}
-        onChange={(e) => handleChange(e, "y")}
-      />
+      <button
+        className="sizeButton"
+        onClick={() => changeSize(-1)}
+        disabled={fieldSize <= 3}
+      >
+        -
+      </button>
+
+      <span className="sizeDisplay">
+        {fieldSize} &#10006; {fieldSize}
+      </span>
+
+      <button
+        className="sizeButton"
+        onClick={() => changeSize(1)}
+        disabled={fieldSize >= 9}
+      >
+        +
+      </button>
     </div>
   );
 }

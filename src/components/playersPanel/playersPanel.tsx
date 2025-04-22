@@ -1,8 +1,14 @@
 import { currentPlayerStore } from "@/store/currentPlayerStore";
 import { playersTimeStore } from "@/store/playerTimeStore";
+import { useEffect, useRef, useState } from "react";
 
 import "./playersPanel.scss";
-import { useEffect, useRef, useState } from "react";
+import { winStore } from "@/store/winStore";
+
+interface GameStats {
+  crossWins: number;
+  circleWins: number;
+}
 
 export default function PlayersPanel() {
   const {
@@ -12,12 +18,24 @@ export default function PlayersPanel() {
     increaseCrossTime,
     timerStarted,
     stopTimer,
-    setStopTimer,
   } = playersTimeStore();
   const { currentPlayer } = currentPlayerStore();
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [initialStart, setInitialStart] = useState(false);
+  const { draw, winner } = winStore();
+
+  const [stats, setStats] = useState<GameStats>({
+    crossWins: 0,
+    circleWins: 0,
+  });
+
+  useEffect(() => {
+    const savedStats = localStorage.getItem("ticTacToeStats");
+    if (savedStats) {
+      setStats(JSON.parse(savedStats));
+    }
+  }, [draw, winner]);
 
   useEffect(() => {
     if (intervalRef.current) {
@@ -53,14 +71,14 @@ export default function PlayersPanel() {
           Гравець <div style={{ color: "red" }}>&#10006;</div>
         </div>
         <div>Затрачений час: {circlePlayerTime}</div>
-        <div>Кількість виграшів 2</div>
+        <div>Кількість виграшів {stats.crossWins}</div>
       </div>
       <div className={currentPlayer === "circle" ? "big" : ""}>
         <div>
           Гравець <span style={{ color: "blue" }}>&#9900;</span>
         </div>
         <div>Затрачений час: {crossPlayerTime}</div>
-        <div>Кількість виграшів 3</div>
+        <div>Кількість виграшів {stats.circleWins}</div>
       </div>
     </div>
   );

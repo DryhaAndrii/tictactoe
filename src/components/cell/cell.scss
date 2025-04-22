@@ -1,6 +1,6 @@
 .cellContainer {
   flex-grow: 1;
-  
+
   > div {
     position: absolute;
   }
@@ -18,4 +18,29 @@
   background-color: white;
 
   cursor: pointer;
+}
+.winning {
+  animation: shake 0.3s linear infinite;
+  background-color: #caffca;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }

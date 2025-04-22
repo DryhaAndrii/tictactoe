@@ -7,15 +7,9 @@
     justify-content: center;
     padding: 3px;
     border-radius: 5px;
-    input{
-        width: 50px;
-        height:100%;
-        padding:0px;
-        margin:0px;
-        border:none;
-        outline: none;
-        display: flex;
-        text-align: center;
-        font-size: 24px;
-    }   
+    gap: 5px;
+    button{
+        width: 40px;
+        height: 30px;
+    }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./field.scss";
 import Cell from "@/components/cell/cell";
 import { CellValueType } from "@/types/symbolTypes";
@@ -6,30 +6,37 @@ import { currentPlayerStore } from "@/store/currentPlayerStore";
 import Button from "../button/button";
 import { playersTimeStore } from "@/store/playerTimeStore";
 import { checkWinner } from "@/functions/checkWinner";
+import { winStore } from "@/store/winStore";
 
 interface Props {
-  x: number;
-  y: number;
+  fieldSize: number;
+}
+interface WinningCell {
+  row: number;
+  col: number;
 }
 
-export default function Field({ x, y }: Props) {
+export default function Field({ fieldSize }: Props) {
   const { currentPlayer, setCurrentPlayer } = currentPlayerStore();
-  const {resetTimes} = playersTimeStore();
+  const { resetTimes, setStopTimer } = playersTimeStore();
+  const { setWinner, setDraw, winner, draw } = winStore();
+  const [winningCells, setWinningCells] = useState<WinningCell[]>([]);
+  const [gameEnd, setGameEnd] = useState(false);
 
   const [field, setField] = useState<CellValueType[][]>(
-    Array(y).fill(Array(x).fill(null))
+    Array(fieldSize).fill(Array(fieldSize).fill(null))
   );
 
-  useEffect(() => {    
-  }, [x, y]);
-
-  function buttonHandler(){
-    setField(Array(y).fill(Array(x).fill(null)));
+  function newGameButtonHandler() {
+    setField(Array(fieldSize).fill(Array(fieldSize).fill(null)));
     resetTimes();
-    setCurrentPlayer('cross')
+    setCurrentPlayer("cross");
+    setWinningCells([]);
+    setGameEnd(false);
   }
 
   function cellClickHandler(cellIndex: number, rowIndex: number) {
+    if (gameEnd) return;
     setField((prevField) => {
       const newRow = [...prevField[rowIndex]];
       if (newRow[cellIndex] !== null) return prevField;
@@ -41,8 +48,18 @@ export default function Field({ x, y }: Props) {
 
       setCurrentPlayer(currentPlayer === "cross" ? "circle" : "cross");
 
-      const winCheck = checkWinner(newField);
-      if(winCheck.winner) console.log("WINNER")
+      const winCheck = checkWinner(newField, fieldSize);
+      if (winCheck.winner) {
+        setStopTimer();
+        setWinner(winCheck.winner);
+        setWinningCells(winCheck.winningCells ?? []);
+        setGameEnd(true);
+      }
+      if (winCheck.isDraw) {
+        setStopTimer();
+        setDraw(true);
+        setGameEnd(true);
+      }
       return newField;
     });
   }
@@ -61,6 +78,7 @@ export default function Field({ x, y }: Props) {
                     cellIndex={cellIndex}
                     rowIndex={rowIndex}
                     cellClickHandler={cellClickHandler}
+                    winningCells={winningCells}
                   />
                 );
               })}
@@ -68,7 +86,7 @@ export default function Field({ x, y }: Props) {
           );
         })}
       </div>
-      <Button onClick={buttonHandler}>Нова гра</Button>
+      <Button onClick={newGameButtonHandler}>Нова гра</Button>
     </div>
   );
 }
