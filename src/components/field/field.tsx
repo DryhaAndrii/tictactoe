@@ -19,7 +19,7 @@ interface WinningCell {
 export default function Field({ fieldSize }: Props) {
   const { currentPlayer, setCurrentPlayer } = currentPlayerStore();
   const { resetTimes, setStopTimer } = playersTimeStore();
-  const { setWinner, setDraw, winner, draw } = winStore();
+  const { setWinner, setDraw} = winStore();
   const [winningCells, setWinningCells] = useState<WinningCell[]>([]);
   const [gameEnd, setGameEnd] = useState(false);
 
