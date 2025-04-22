@@ -1,0 +1,21 @@
+.cellContainer {
+  flex-grow: 1;
+  
+  > div {
+    position: absolute;
+  }
+  .circle {
+    color: blue;
+  }
+  .cross {
+    color: red;
+  }
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: white;
+
+  cursor: pointer;
+}
